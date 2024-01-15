@@ -30,6 +30,11 @@ public class UserBO {
 		
 		return userEntity == null ? null : userEntity.getId();
 	}
+	
+	// input: loginId, password      output:UserEntity
+	public UserEntity getUserEntityByLoginIdPassword(String loginId, String password) {
+		return userRepository.findByLoginIdAndPassword(loginId, password);
+	}
 }
 
 
