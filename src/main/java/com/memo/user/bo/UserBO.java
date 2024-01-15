@@ -18,6 +18,18 @@ public class UserBO {
 	}
 	
 	// input: 파라미터 4개    output: Integer id(pk) 
+	public Integer addUser(String loginId, String password, String name, String email) {
+		UserEntity userEntity = userRepository.save(
+					UserEntity.builder()
+						.loginId(loginId)
+						.password(password)
+						.name(name)
+						.email(email)
+						.build()
+				);
+		
+		return userEntity == null ? null : userEntity.getId();
+	}
 }
 
 
