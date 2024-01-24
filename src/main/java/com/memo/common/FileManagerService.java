@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component // spring bean
 public class FileManagerService {
 
@@ -43,6 +46,34 @@ public class FileManagerService {
 		// 주소는 이렇게 될 것이다.(예언)
 		// /images/aaaa_1823478932/sun.png
 		return "/images/" + directoryName + "/" + file.getOriginalFilename();
+	}
+	
+	// input:imagePath       output:X
+	public void deleteFile(String imagePath) { // /images/aaaa_1705483559993/girl-8435329_640.png
+		// D:\\shinboram\\6_spring_project\\MEMO\\memo_workspace\\images/aaaa_1705483559993/girl-8435329_640.png
+		// 주소에 겹치는 /images/ 지운다.
+		Path path = Paths.get(FILE_UPLOAD_PATH + imagePath.replace("/images/", ""));
+		
+		// 삭제할 이미지가 존재하는가?
+		if (Files.exists(path)) {
+			// 이미지 삭제
+			try {
+				Files.delete(path);
+			} catch (IOException e) {
+				log.info("[파일매니저 삭제] 이미지 삭제 실패. path:{}", path.toString());
+				return;
+			}
+			
+			// 폴더(디렉토리) 삭제
+			path = path.getParent();
+			if (Files.exists(path)) {
+				try {
+					Files.delete(path);
+				} catch (IOException e) {
+					log.info("[파일매니저 삭제] 폴더 삭제 실패. path:{}", path.toString());
+				}
+			}
+		}
 	}
 }
 
