@@ -77,6 +77,7 @@ public class PostBO {
 		}
 		
 		// db 업데이트
+		postMapper.updatePostByPostId(postId, subject, content, imagePath);
 	}
 }
 
