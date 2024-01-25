@@ -20,7 +20,7 @@
 		</div>
 		
 		<div class="d-flex justify-content-between">
-			<button type="button" id="deleteBtn" class="btn btn-secondary">삭제</button>
+			<button type="button" id="deleteBtn" class="btn btn-secondary" data-post-id="${post.id}">삭제</button>
 			
 			<div>
 				<a href="/post/post-list-view" class="btn btn-dark">목록</a>
@@ -92,6 +92,27 @@
 				, error:function(request, status, error) {
 					alert("글을 수정하는데 실패했습니다.");
 				} 
+			});
+		});
+		
+		$("#deleteBtn").on('click', function() {
+			let postId = $(this).data("post-id");
+			//alert(postId);
+			
+			$.ajax({
+				type:"DELETE"
+				, url:"/post/delete"
+				, data:{"postId":postId}
+				, success:function(data) {
+					if (data.code == 200) {
+						location.href = "/post/post-list-view";
+					} else {
+						alert(data.error_message);
+					}
+				}
+				, error:function(request, status, error) {
+					alert("글 삭제 하는데 실패했습니다.");
+				}
 			});
 		});
 	});
