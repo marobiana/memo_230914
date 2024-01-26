@@ -27,6 +27,12 @@
 			</tbody>
 		</table>
 		
+		<%-- 페이징 --%>
+		<div class="text-center">
+			<a href="/post/post-list-view?prevId=${prevId}" class="mr-5">&lt;&lt; 이전</a>
+			<a href="/post/post-list-view?nextId=${nextId}">다음 &gt;&gt;</a>
+		</div>
+		
 		<%-- 글쓰기 버튼 --%>
 		<div class="d-flex justify-content-end">
 			<a href="/post/post-create-view" class="btn btn-info">글쓰기</a>

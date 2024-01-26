@@ -23,7 +23,13 @@
 			`post`
 		WHERE
 			`userId` = #{userId}
+			<if test="direction == 'next'">
+			<![CDATA[
+			AND `id` < #{standardId}
+			]]>
+			</if>
 		ORDER BY `id` DESC
+		LIMIT ${limit}
 	</select>
 	
 	<insert id="insertPost" parameterType="map">
