@@ -1,5 +1,6 @@
 package com.memo.post.bo;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,13 @@ public class PostBO {
 		if (prevId != null) { // 2) 이전
 			standardId = prevId;
 			direction = "prev";
+			
+			List<Post> postList = postMapper.selectPostListByUserId(userId, standardId, direction, POST_MAX_SIZE);
+			
+			// reverse list   5 6 7 =>  7 6 5
+			Collections.reverse(postList); // 뒤집고 저장
+			
+			return postList;
 		} else if (nextId != null) { // 1) 다음
 			standardId = nextId;
 			direction = "next";
@@ -47,6 +55,18 @@ public class PostBO {
 		
 		// 3) 페이징 정보 없음, 1) 다음
 		return postMapper.selectPostListByUserId(userId, standardId, direction, POST_MAX_SIZE);
+	}
+	
+	// 이전 페이지의 마지막인가?
+	public boolean isPrevLastPageByUserId(int userId, int prevId) {
+		int postId = postMapper.selectPostIdByUserIdSort(userId, "DESC");
+		return postId == prevId; // 같으면 마지막이다. 
+	}
+	
+	// 다음 페이지의 마지막인가?
+	public boolean isNextLastPageByUserId(int userId, int nextId) {
+		int postId = postMapper.selectPostIdByUserIdSort(userId, "ASC");
+		return postId == nextId; // 같으면 마지막이다. 
 	}
 	
 	// input: params     output: X

@@ -27,9 +27,28 @@
 			<![CDATA[
 			AND `id` < #{standardId}
 			]]>
-			</if>
 		ORDER BY `id` DESC
+			</if>
+			<if test="direction == 'prev'">
+			<![CDATA[
+			AND `id` > #{standardId}
+			]]>
+			</if>
+			<if test="direction == null">
+		ORDER BY `id` DESC
+			</if>
 		LIMIT ${limit}
+	</select>
+	
+	<select id="selectPostIdByUserIdSort" parameterType="map" resultType="int">
+		SELECT
+			`id`
+		FROM
+			`post`
+		WHERE
+			`userId` = #{userId}
+		ORDER BY `id` ${sort}
+		LIMIT 1
 	</select>
 	
 	<insert id="insertPost" parameterType="map">

@@ -41,6 +41,18 @@ public class PostController {
 			// postList가 비어있을 때 [] 오류를 방지하기 위함
 			prevId = postList.get(0).getId(); // 리스트의 첫번째 글번호
 			nextId = postList.get(postList.size() - 1).getId(); // 리스트의 마지막 글번호
+			
+			// 이전 방향의 끝인가?
+			// prevId와 post 테이블의 가장 큰 id값과 같으면 이전 페이지 없음
+			if (postBO.isPrevLastPageByUserId(userId, prevId)) {
+				prevId = 0;
+			}
+			
+			// 다음 방향의 끝인가?
+			// nextId와 post 테이블의 가장 작은 id값과 같으면 다음 페이지 없음
+			if (postBO.isNextLastPageByUserId(userId, nextId)) {
+				nextId = 0;
+			}
 		}
 		
 		model.addAttribute("nextId", nextId);
