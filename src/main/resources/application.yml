@@ -8,7 +8,7 @@ spring:
     static-path-pattern: /static/**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/memo_230914?characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/memo_240214?characterEncoding=UTF-8
     username: root
     password: root
   jpa:

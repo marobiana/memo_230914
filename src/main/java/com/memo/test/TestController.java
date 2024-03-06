@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.memo.post.mapper.PostMapper;
@@ -42,6 +44,24 @@ public class TestController {
 	@ResponseBody
 	public List<Map<String, Object>> test4() {
 		return postMapper.selectPostList();
+	}
+	
+	@GetMapping("/test5")
+	public String test5(){
+
+		return "test/test";
+	}
+	
+	@PostMapping("/test6")
+	@ResponseBody
+	public List<Map<String, Object>> create(
+			@RequestBody List<Map<String, Object>> orderList){
+
+		//List<Map<String, Object>> orderList = cartList;
+		//List<ProductEntity> list = productList;
+
+		//String number = phoneNumber;
+		return orderList;
 	}
 }
 
