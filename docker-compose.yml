@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:5.7
+    container_name: spring-mysql
+    restart: always
+    ports:
+      - 3308:3308
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "memo_231226"
+    command:
+      - "mysqld"
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --port=3308
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d # MySQL 설정 파일 위치
+      - ./mysql/initdb.d/:/docker-entrypoint-initdb.d/ # 윗줄과 디렉토리가 연결되어 컨테이너 접근가능
+    networks:
+      - memo_network
+      
+  application:
+    container_name: memo-test
+    image: marobiana/memo
+    restart: on-failure
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3308/memo_231226?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "root"
+    depends_on:
+      - db
+    networks:
+      - memo_network
+
+networks:
+  memo_network:
