@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}">
+<div layout:fragment="content" class="d-flex justify-content-center">
+	<div class="w-50">
+		<h1>글 목록</h1>
+		
+		<table class="table">
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>제목</th>
+					<th>작성날짜</th>
+					<th>수정날짜</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="post : ${postList}">
+					<td th:text="${post.id}"></td>
+					<td><a th:href="@{/post/post-detail-view(postId=${post.id})}" th:text="${post.subject}"></a></td>
+					<td th:text="${#dates.format(post.createdAt, 'yyyy년 M월 d일 HH:mm:ss')}"></td>
+					<td th:text="${#dates.format(post.updatedAt, 'yyyy년 M월 d일 HH:mm:ss')}"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<!-- 페이징 -->
+		<div class="text-center">
+			<a th:if="${prevId != 0}" th:href="@{/post/post-list-view(prevId=${prevId})}" class="mr-5">&lt;&lt; 이전</a>
+			<a th:if="${nextId != 0}" th:href="@{/post/post-list-view(nextId=${nextId})}">다음 &gt;&gt;</a>
+		</div>
+		
+		<!-- 글쓰기 버튼 -->
+		<div class="d-flex justify-content-end">
+			<a href="/post/post-create-view" class="btn btn-info">글쓰기</a>
+		</div>
+	</div>
+</div>

@@ -1,6 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<div class="d-flex justify-content-center">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}">
+<div layout:fragment="content" class="d-flex justify-content-center">
 	<div class="sign-up-box">
 		<h1 class="mb-4">회원가입</h1>
 		<form id="signUpForm" method="post" action="/user/sign-up">
@@ -8,14 +10,14 @@
 				<tr>
 					<th>* 아이디(4자 이상)<br></th>
 					<td>
-						<%-- 인풋박스 옆에 중복확인을 붙이기 위해 div를 하나 더 만들고 d-flex --%>
+						<!-- 인풋박스 옆에 중복확인을 붙이기 위해 div를 하나 더 만들고 d-flex -->
 						<div class="d-flex">
 							<input type="text" id="loginId" name="loginId" class="form-control col-9" placeholder="아이디를 입력하세요.">
 							<button type="button" id="loginIdCheckBtn" class="btn btn-success">중복확인</button><br>
 						</div>
 						
-						<%-- 아이디 체크 결과 --%>
-						<%-- d-none 클래스: display none (보이지 않게) --%>
+						<!-- 아이디 체크 결과 -->
+						<!-- d-none 클래스: display none (보이지 않게) -->
 						<div id="idCheckLength" class="small text-danger d-none">ID를 4자 이상 입력해주세요.</div>
 						<div id="idCheckDuplicated" class="small text-danger d-none">이미 사용중인 ID입니다.</div>
 						<div id="idCheckOk" class="small text-success d-none">사용 가능한 ID 입니다.</div>
@@ -45,78 +47,58 @@
 	</div>
 </div>
 
-<script>
+<th:block layout:fragment="script">
+	<script>
 	$(document).ready(function() {
-		
-		// 아이디 중복확인
-		$("#loginIdCheckBtn").on('click', function() {
-			//alert("중복확인");
-			
+		// 중복버튼 클릭
+		$('#loginIdCheckBtn').on('click', function() {
+			//alert("중복 확인");
 			// 경고 문구 초기화
-			$("#idCheckLength").addClass("d-none");
-			$("#idCheckDuplicated").addClass("d-none");
-			$("#idCheckOk").addClass("d-none");
+			$('#idCheckLength').addClass("d-none");
+			$('#idCheckDuplicated').addClass("d-none");
+			$('#idCheckOk').addClass("d-none");
 			
-			let loginId = $("#loginId").val().trim();
+			let loginId = $('#loginId').val().trim();
 			if (loginId.length < 4) {
-				$("#idCheckLength").removeClass("d-none");
+				$('#idCheckLength').removeClass('d-none');
 				return;
 			}
 			
 			// AJAX - 중복확인
-			/*
 			$.ajax({
 				// request
 				url:"/user/is-duplicated-id"
 				, data:{"loginId":loginId}
 				
 				// response
-				, success:function(data) { 
-					if (data.code == 200) {
-						if (data.is_duplicated_id) { // 중복
-							$("#idCheckDuplicated").removeClass("d-none");
-						} else { // 사용 가능
-							$("#idCheckOk").removeClass("d-none");
-						}
-					} else {
-						alert(data.error_message);
+				, success:function(data) {
+					// {"code":200, "isDuplicated":true}  중복 true
+					if (data.isDuplicated) { // 중복
+						$('#idCheckDuplicated').removeClass('d-none');
+					} else { // 중복 아님 => 사용 가능
+						$('#idCheckOk').removeClass('d-none');
 					}
 				}
-				, error(request, status, error) {
+				, error:function(request, status, error) {
 					alert("중복확인에 실패했습니다.");
 				}
-			});*/
-			
-			$.get("/user/is-duplicated-id", {"loginId":loginId}) // request
-			.done(function(data) { // response
-				if (data.code == 200) {
-					if (data.is_duplicated_id) { // 중복
-						$("#idCheckDuplicated").removeClass("d-none");
-					} else { // 사용 가능
-						$("#idCheckOk").removeClass("d-none");
-					}
-				} else {
-					alert(data.error_message);
-				}
 			});
-			
 		});
 		
-		// 회원가입
+		// 회원가입 submit
 		$('#signUpForm').on('submit', function(e) {
-			e.preventDefault(); // submit 기능 막음
+			e.preventDefault(); // 서브밋 기능 막음
 			
-			//alert("회원가입");
+			//alert("aaaaaa");
+			// validation
+			let loginId = $('#loginId').val().trim();
+			let password = $('#password').val();
+			let confirmPassword = $('#confirmPassword').val();
+			let name = $('#name').val().trim();
+			let email = $('#email').val().trim();
 			
-			// validation check
-			let loginId = $("#loginId").val().trim();
-			let password = $("#password").val();
-			let confirmPassword = $("#confirmPassword").val();
-			let name = $("#name").val().trim();
-			let email = $("#email").val().trim();
-			
-			if (!loginId) {
-				alert("아이디를 입력하세요.");
+			if (loginId == '') {
+				alert("아이디를 입력하세요");
 				return false;
 			}
 			
@@ -140,39 +122,34 @@
 				return false;
 			}
 			
-			// 중복확인 후 사용 가능한 아이디인지 확인
-			// => idCheckOk 클래스 d-none이 없을 때
-			if ($("#idCheckOk").hasClass('d-none')) {
+			// 중복확인 후 사용 가능한지 확인 => idCheckOk가 d-none이 있을 때 얼럿 띄움
+			if ($('#idCheckOk').hasClass('d-none')) {
 				alert("아이디 중복확인을 다시 해주세요.");
 				return false;
 			}
 			
-			//alert("회원가입");
+			// 서버로 보내는 방법 두 가지
+			// 1) submit을 자바스크립트로 동작 시킴
+			//$(this)[0].submit(); // 화면 이동이 반드시 된다.(jsp, redirect)
 			
-			// 1) 서버 전송: submit을 js에서 동작시킴
-			//$(this)[0].submit(); // 화면 이동이 된다.
-			
-			// 2) AJAX: 화면 이동 되지 않음(콜백함수에서 이동) 응답값 JSON
-			let url = $(this).attr("action");
+			// 2) AJAX - 응답값이 JSON
+			let url = $(this).attr('action');
 			//alert(url);
-			let params = $(this).serialize(); // 폼태그에 있는 name 속성과 값으로 파라미터를 구성
+			let params = $(this).serialize(); // 폼태그에 있는 name 속성-값으로 파라미터 구성
 			console.log(params);
 			
-			$.post(url, params)  // request
-			.done(function(data) { // response
+			$.post(url, params) // request
+			.done(function(data) {  // response
 				// {"code":200, "result":"성공"}
-				if (data.code == 200) {
-					alert("가입을 환영합니다. 로그인 해주세요.");
+				if (data.code == 200) { // 성공
+					alert("가입을 환영합니다. 로그인을 해주세요!");
 					location.href = "/user/sign-in-view"; // 로그인 화면으로 이동
 				} else {
 					// 로직 실패
-					alert(data.error_message);
+					alert(data.errorMessage);
 				}
 			});
 		});
 	});
-</script>
-
-
-
-
+	</script>
+</th:block>
