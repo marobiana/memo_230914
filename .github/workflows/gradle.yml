@@ -35,9 +35,9 @@ jobs:
 
     - name: Docker build      # 이미지 생성 및 docker hub push
       run: |
-        docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/memo-240619 .   # 뒤에는 도커허브에 올린 이미지명
-        docker push ${{ secrets.DOCKER_USERNAME }}/memo-240619  # 뒤에는 도커허브에 올린 이미지명
+        docker push ${{ secrets.DOCKER_USERNAME }}/memo-240619
         
     - name: Deploy                # AWS에서 할 docker hub pull, docker compose 실행
       uses: appleboy/ssh-action@master
