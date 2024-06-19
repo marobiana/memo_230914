@@ -10,6 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 public class TestBatch {
 	@Scheduled(cron = "0 */1 * * * *")
 	public void task() {
-		log.info("####### batch 수행");
+		log.info("!####### batch 수행");
 	}
 }
